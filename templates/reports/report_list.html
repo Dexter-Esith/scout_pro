@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold">Reports</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ reports|length }} reports found</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<form method="GET" class="flex gap-3 mb-6 flex-wrap">
+    <div class="relative flex-1 min-w-48">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by player..."
+            class="w-full bg-[#1a1d27] border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition">
+    </div>
+
+    <select name="scout" class="bg-[#1a1d27] border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition">
+        <option value="">All Scouts</option>
+        {% for scout in scouts %}
+        <option value="{{ scout.username }}" {% if scout_filter == scout.username %}selected{% endif %}>
+            {{ scout.username }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition">
+        Search
+    </button>
+
+    {% if query or scout_filter %}
+    <a href="/reports/" class="bg-gray-700 hover:bg-gray-600 text-white text-sm px-4 py-2.5 rounded-lg transition">
+        Reset
+    </a>
+    {% endif %}
+</form>
+
+<!-- Reports List -->
+<div class="space-y-4">
+    {% for report in reports %}
+    <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6 hover:border-gray-700 transition">
+        <div class="flex items-start justify-between gap-4">
+
+            <!-- Player Info -->
+            <div class="flex items-center gap-4 min-w-0">
+                <div class="w-12 h-12 rounded-xl bg-[#0f1117] border border-gray-700 flex items-center justify-center text-lg font-bold text-gray-400 shrink-0 overflow-hidden">
+                    {% if report.player.photo %}
+                        <img src="{{ report.player.photo.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ report.player.full_name|first }}
+                    {% endif %}
+                </div>
+                <div class="min-w-0">
+                    <a href="/players/{{ report.player.pk }}/" class="font-semibold hover:text-green-400 transition truncate block">
+                        {{ report.player.full_name }}
+                    </a>
+                    <div class="text-gray-500 text-xs mt-0.5">
+                        {{ report.player.club }} · <span class="font-mono">{{ report.player.position }}</span>
+                    </div>
+                    <div class="text-gray-600 text-xs mt-1">
+                        {{ report.match_name }} · {{ report.created_at|date:"M d, Y" }} · by {{ report.scout.username }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating -->
+            <div class="shrink-0 text-right">
+                <div class="text-3xl font-bold {% if report.rating >= 7 %}text-green-400{% elif report.rating >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+                    {{ report.rating }}
+                </div>
+                <div class="text-gray-500 text-xs">rating</div>
+            </div>
+        </div>
+
+        <!-- Strengths & Weaknesses -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-800">
+            <div>
+                <div class="text-green-400 text-xs font-semibold mb-1">STRENGTHS</div>
+                <p class="text-gray-300 text-sm">{{ report.strengths }}</p>
+            </div>
+            <div>
+                <div class="text-red-400 text-xs font-semibold mb-1">WEAKNESSES</div>
+                <p class="text-gray-300 text-sm">{{ report.weaknesses }}</p>
+            </div>
+        </div>
+
+        {% if report.notes %}
+        <div class="mt-3 text-gray-400 text-sm bg-[#0f1117] rounded-lg p-3">
+            {{ report.notes }}
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-16 text-center">
+        <div class="text-gray-500 text-sm">No reports yet.</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

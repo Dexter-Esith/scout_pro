@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold">Players</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ players|length }} players found</p>
+    </div>
+        <a href="/players/add/" class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    Add Player
+</a>
+</div>
+
+<!-- Filters -->
+<form method="GET" class="flex gap-3 mb-6">
+    <div class="relative flex-1">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search players..."
+            class="w-full bg-[#1a1d27] border border-gray-700 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition"
+        >
+    </div>
+
+    <select name="position" class="bg-[#1a1d27] border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition">
+        <option value="">All Positions</option>
+        <option value="GK" {% if position == 'GK' %}selected{% endif %}>GK</option>
+        <option value="CB" {% if position == 'CB' %}selected{% endif %}>CB</option>
+        <option value="LB" {% if position == 'LB' %}selected{% endif %}>LB</option>
+        <option value="RB" {% if position == 'RB' %}selected{% endif %}>RB</option>
+        <option value="CDM" {% if position == 'CDM' %}selected{% endif %}>CDM</option>
+        <option value="CM" {% if position == 'CM' %}selected{% endif %}>CM</option>
+        <option value="CAM" {% if position == 'CAM' %}selected{% endif %}>CAM</option>
+        <option value="LW" {% if position == 'LW' %}selected{% endif %}>LW</option>
+        <option value="RW" {% if position == 'RW' %}selected{% endif %}>RW</option>
+        <option value="ST" {% if position == 'ST' %}selected{% endif %}>ST</option>
+        <option value="CF" {% if position == 'CF' %}selected{% endif %}>CF</option>
+        <option value="LM" {% if position == 'LM' %}selected{% endif %}>LM</option>
+        <option value="RM" {% if position == 'RM' %}selected{% endif %}>RM</option>    </select>
+
+    <input
+        type="text"
+        name="nationality"
+        value="{{ nationality }}"
+        placeholder="Nationality..."
+        class="bg-[#1a1d27] border border-gray-700 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition w-40"
+    >
+
+    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition">
+        Search
+    </button>
+
+    {% if query or position or nationality %}
+    <a href="/players/" class="bg-gray-700 hover:bg-gray-600 text-white text-sm px-4 py-2.5 rounded-lg transition">
+        Reset
+    </a>
+    {% endif %}
+</form>
+
+<!-- Table -->
+<div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+    <table class="w-full">
+        <thead>
+            <tr class="border-b border-gray-800 text-gray-500 text-xs uppercase tracking-wider">
+                <th class="text-left px-6 py-4">Player</th>
+                <th class="text-left px-6 py-4">Position</th>
+                <th class="text-left px-6 py-4">Club</th>
+                <th class="text-left px-6 py-4">Age</th>
+                <th class="text-left px-6 py-4">Nationality</th>
+                <th class="text-left px-6 py-4">Market Value</th>
+                <th class="px-6 py-4"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+            {% for player in players %}
+            <tr class="hover:bg-[#1e2235] transition">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-[#0f1117] border border-gray-700 flex items-center justify-center text-sm font-bold text-gray-400 overflow-hidden">
+                            {% if player.photo %}
+                                <img src="{{ player.photo.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ player.full_name|first }}
+                            {% endif %}
+                        </div>
+                        <a href="/players/{{ player.pk }}/" class="font-medium text-sm hover:text-green-400 transition">
+                            {{ player.full_name }}
+                        </a>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="bg-[#0f1117] text-gray-300 text-xs px-2 py-1 rounded font-mono">{{ player.position }}</span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-300">{{ player.club }}</td>
+                <td class="px-6 py-4 text-sm text-gray-300">{{ player.get_age }}</td>
+                <td class="px-6 py-4 text-sm text-gray-300">{{ player.nationality }}</td>
+                <td class="px-6 py-4 text-sm text-gray-300">
+                    {% if player.market_value %}
+                        €{{ player.market_value|floatformat:0 }}
+                    {% else %}
+                        <span class="text-gray-600">—</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4">
+                    <a href="/players/{{ player.pk }}/" class="text-green-400 hover:text-green-300 text-sm">View →</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="px-6 py-16 text-center text-gray-500 text-sm">
+                    No players found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

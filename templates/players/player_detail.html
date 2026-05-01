@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center gap-4 mb-8">
+    <a href="/players/" class="text-gray-500 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <h1 class="text-2xl font-bold">Player Profile</h1>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+
+    <!-- Left Column -->
+    <div class="col-span-2 space-y-6">
+
+        <!-- Player Card -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <div class="flex flex-wrap items-start gap-6">
+
+                <!-- Photo -->
+                <div class="relative group w-24 h-24">
+    <div class="w-24 h-24 rounded-xl bg-[#0f1117] border border-gray-700 overflow-hidden flex items-center justify-center text-3xl font-bold text-gray-500">
+        {% if player.photo %}
+            <img src="{{ player.photo.url }}" class="w-full h-full object-cover">
+        {% else %}
+            {{ player.full_name|first }}
+        {% endif %}
+    </div>
+
+    <!-- Hover overlay -->
+    <form method="POST" action="/players/{{ player.pk }}/photo/" enctype="multipart/form-data"
+          class="absolute inset-0 rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transition cursor-pointer">
+        {% csrf_token %}
+        <label class="w-full h-full flex flex-col items-center justify-center bg-black/70 cursor-pointer">
+            <svg class="w-5 h-5 text-white mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span class="text-white text-xs">Upload</span>
+            <input type="file" name="photo" accept="image/*" class="hidden" onchange="this.form.submit()">
+        </label>
+    </form>
+</div>
+
+                <!-- Info -->
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h2 class="text-2xl font-bold">{{ player.full_name }}</h2>
+                        <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded font-mono">{{ player.position }}</span>
+                    </div>
+                    <div class="text-gray-400 text-sm mb-4">{{ player.club }}</div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+                        <div>
+                            <div class="text-gray-500 text-xs mb-1">Age</div>
+                            <div class="font-semibold">{{ player.get_age }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-xs mb-1">Height</div>
+                            <div class="font-semibold">{{ player.height }} cm</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-xs mb-1">Foot</div>
+                            <div class="font-semibold">{{ player.preferred_foot }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-xs mb-1">Nationality</div>
+                            <div class="font-semibold">{{ player.nationality }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Info -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <h3 class="font-semibold mb-4">Player Info</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Date of Birth</span>
+                    <span>{{ player.date_of_birth }}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Market Value</span>
+                    <span>{% if player.market_value %}€{{ player.market_value|floatformat:0 }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Contract Expiry</span>
+                    <span>{% if player.contract_expiry %}{{ player.contract_expiry }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Agent</span>
+                    <span>{% if player.agent %}{{ player.agent }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Weight</span>
+                    <span>{{ player.weight }} kg</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-800">
+                    <span class="text-gray-500">Preferred Foot</span>
+                    <span>{{ player.preferred_foot }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between p-6 border-b border-gray-800">
+                <h3 class="font-semibold">Scouting Reports</h3>
+                <a href="/reports/add/{{ player.pk }}/" class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                    + Add Report
+                </a>
+            </div>
+
+            <div class="divide-y divide-gray-800">
+                {% for report in reports %}
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+    <div>
+        <div class="font-medium text-sm">{{ report.match_name }}</div>
+        <div class="text-gray-500 text-xs mt-0.5">{{ report.created_at|date:"M d, Y" }} · by {{ report.scout.username }}</div>
+    </div>
+    <div class="flex items-center gap-3">
+        <span class="text-xl font-bold {% if report.rating >= 7 %}text-green-400{% elif report.rating >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+            {{ report.rating }}
+        </span>
+        {% if request.user.is_superuser or report.scout == request.user %}
+<a href="/reports/{{ report.pk }}/edit/" class="text-xs text-gray-500 hover:text-green-400 transition">Edit</a>
+<a href="/reports/{{ report.pk }}/delete/" class="text-xs text-gray-500 hover:text-red-400 transition">Delete</a>
+{% endif %}
+    </div>
+</div>
+
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="text-green-400 text-xs font-semibold mb-1">STRENGTHS</div>
+                            <p class="text-gray-300">{{ report.strengths }}</p>
+                        </div>
+                        <div>
+                            <div class="text-red-400 text-xs font-semibold mb-1">WEAKNESSES</div>
+                            <p class="text-gray-300">{{ report.weaknesses }}</p>
+                        </div>
+                    </div>
+
+                    {% if report.notes %}
+                    <div class="mt-3 text-gray-400 text-sm bg-[#0f1117] rounded-lg p-3">
+                        {{ report.notes }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="p-8 text-center text-gray-500 text-sm">
+                    No reports yet.
+                    <a href="/reports/add/{{ player.pk }}/" class="text-green-400 hover:text-green-300 ml-1">Add first report →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="space-y-6">
+
+        <!-- Average Rating -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6 text-center">
+            <div class="text-gray-400 text-sm mb-2">Average Rating</div>
+            {% with avg=player.get_average_rating %}
+            {% if avg %}
+                <div class="text-5xl font-bold {% if avg >= 7 %}text-green-400{% elif avg >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+                    {{ avg }}
+                </div>
+                <div class="text-gray-500 text-xs mt-2">Based on {{ reports|length }} report{{ reports|length|pluralize }}</div>
+            {% else %}
+                <div class="text-3xl font-bold text-gray-600">—</div>
+                <div class="text-gray-500 text-xs mt-2">No reports yet</div>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <h3 class="font-semibold mb-4 text-sm">Quick Stats</h3>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Total Reports</span>
+                    <span class="font-semibold">{{ reports|length }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Position</span>
+                    <span class="font-mono text-green-400">{{ player.position }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Club</span>
+                    <span>{{ player.club }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit -->
+        <a href="/players/{{ player.pk }}/edit/" class="block w-full bg-[#1a1d27] hover:bg-[#1e2235] border border-gray-700 text-center text-sm py-3 rounded-xl transition">
+    Edit Player →
+</a>
+<a href="/players/{{ player.pk }}/shortlist/"
+   class="block w-full text-center text-sm py-3 rounded-xl transition border
+   {% if in_shortlist %}bg-yellow-500/10 border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20
+   {% else %}bg-[#1a1d27] border-gray-700 text-gray-400 hover:bg-[#1e2235]{% endif %}">
+    {% if in_shortlist %}★ Shortlisted{% else %}★ Add to Shortlist{% endif %}
+</a>
+    </div>
+</div>
+
+{% endblock %}

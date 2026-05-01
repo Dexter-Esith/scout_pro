@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-2xl font-bold">Scouts</h1>
+    <p class="text-gray-400 text-sm mt-1">{{ scouts|length }} scouts registered</p>
+</div>
+
+<div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+    <div class="divide-y divide-gray-800">
+        {% for scout in scouts %}
+        <a href="/accounts/scouts/{{ scout.pk }}/" class="flex items-center justify-between px-6 py-4 hover:bg-[#1e2235] transition">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 font-bold shrink-0">
+                    {{ scout.first_name|first|upper }}{% if not scout.first_name %}{{ scout.username|first|upper }}{% endif %}
+                </div>
+                <div>
+                    <div class="font-medium text-sm">
+                        {% if scout.first_name %}{{ scout.first_name }} {{ scout.last_name }}{% else %}{{ scout.username }}{% endif %}
+                    </div>
+                    <div class="text-gray-500 text-xs">{{ scout.email }}</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-6 text-sm">
+                <div class="text-center">
+                    <div class="font-semibold text-blue-400">{{ scout.report_set.count }}</div>
+                    <div class="text-gray-500 text-xs">Reports</div>
+                </div>
+                <div class="text-center">
+                    <div class="font-semibold text-purple-400">{{ scout.added_players.count }}</div>
+                    <div class="text-gray-500 text-xs">Players</div>
+                </div>
+                <span class="text-gray-600">→</span>
+            </div>
+        </a>
+        {% empty %}
+        <div class="px-6 py-16 text-center text-gray-500 text-sm">No scouts yet.</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

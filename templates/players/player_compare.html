@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-2xl font-bold">Player Comparison</h1>
+    <p class="text-gray-400 text-sm mt-1">Compare up to 4 players</p>
+</div>
+
+<!-- Selector -->
+<form method="GET" class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6 mb-8">
+    <h3 class="font-semibold mb-4 text-sm text-gray-400 uppercase tracking-wider">Select Players</h3>
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+        {% for slot in selected %}
+        <div>
+            <label class="block text-sm text-gray-400 mb-2">Player {{ forloop.counter }}</label>
+            <select name="players" class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-green-500 transition">
+                <option value="">— Select —</option>
+                {% for p in all_players %}
+                <option value="{{ p.pk }}" {% if slot == p.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ p.full_name }} ({{ p.position }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition">
+        Compare
+    </button>
+</form>
+
+{% if players %}
+<!-- Comparison Table -->
+<div class="bg-[#1a1d27] rounded-xl border border-gray-800 overflow-x-auto">
+    <table class="w-full min-w-[600px]">
+        <thead>
+            <tr class="border-b border-gray-800">
+                <th class="text-left p-4 text-gray-500 text-xs uppercase tracking-wider w-36">Player</th>
+                {% for item in players %}
+                <th class="p-4 border-l border-gray-800 text-center">
+                    <div class="w-14 h-14 rounded-xl bg-[#0f1117] border border-gray-700 flex items-center justify-center text-xl font-bold text-gray-400 mx-auto mb-2 overflow-hidden">
+                        {% if item.player.photo %}
+                            <img src="{{ item.player.photo.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                            {{ item.player.full_name|first }}
+                        {% endif %}
+                    </div>
+                    <div class="font-semibold text-sm">{{ item.player.full_name }}</div>
+                    <div class="text-gray-500 text-xs mt-0.5">{{ item.player.club }}</div>
+                    <span class="inline-block mt-1 bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded font-mono">{{ item.player.position }}</span>
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Avg Rating</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center">
+                    {% if item.avg %}
+                        <span class="text-2xl font-bold {% if item.avg >= 7 %}text-green-400{% elif item.avg >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">{{ item.avg }}</span>
+                    {% else %}
+                        <span class="text-gray-600">—</span>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Reports</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold">{{ item.report_count }}</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Age</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold">{{ item.player.get_age }}</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Height</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold">{{ item.player.height }} cm</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Weight</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold">{{ item.player.weight }} kg</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Foot</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold">{{ item.player.preferred_foot }}</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Nationality</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center font-semibold text-sm">{{ item.player.nationality }}</td>
+                {% endfor %}
+            </tr>
+            <tr class="border-b border-gray-800 hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Market Value</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center text-sm font-semibold">
+                    {% if item.player.market_value %}€{{ item.player.market_value|floatformat:0 }}{% else %}—{% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr class="hover:bg-[#1e2235]">
+                <td class="p-4 text-gray-400 text-sm font-medium">Contract</td>
+                {% for item in players %}
+                <td class="p-4 border-l border-gray-800 text-center text-sm">
+                    {% if item.player.contract_expiry %}{{ item.player.contract_expiry }}{% else %}—{% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

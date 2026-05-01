@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="flex items-center gap-4 mb-8">
+    <a href="/accounts/scouts/" class="text-gray-500 hover:text-white transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </a>
+    <h1 class="text-2xl font-bold">Scout Profile</h1>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+    <!-- Left -->
+    <div class="col-span-2 space-y-6">
+
+        <!-- Recent Reports -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between p-6 border-b border-gray-800">
+                <h3 class="font-semibold">Recent Reports</h3>
+                <a href="/reports/?scout={{ scout.username }}" class="text-green-400 text-sm hover:text-green-300">View all →</a>
+            </div>
+            <div class="divide-y divide-gray-800">
+                {% for report in reports %}
+                <div class="flex items-center justify-between px-6 py-4 hover:bg-[#1e2235] transition">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-full bg-[#0f1117] border border-gray-700 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 overflow-hidden">
+                            {% if report.player.photo %}
+                                <img src="{{ report.player.photo.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ report.player.full_name|first }}
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0">
+                            <a href="/players/{{ report.player.pk }}/" class="font-medium text-sm hover:text-green-400 truncate block">{{ report.player.full_name }}</a>
+                            <div class="text-gray-500 text-xs">{{ report.match_name }} · {{ report.created_at|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                    <span class="text-lg font-bold shrink-0 ml-4 {% if report.rating >= 7 %}text-green-400{% elif report.rating >= 5 %}text-yellow-400{% else %}text-red-400{% endif %}">
+                        {{ report.rating }}
+                    </span>
+                </div>
+                {% empty %}
+                <div class="px-6 py-8 text-center text-gray-500 text-sm">No reports yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Added Players -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+            <div class="flex items-center justify-between p-6 border-b border-gray-800">
+                <h3 class="font-semibold">Added Players</h3>
+                <a href="/players/?added_by={{ scout.pk }}" class="text-green-400 text-sm hover:text-green-300">View all →</a>
+            </div>
+            <div class="divide-y divide-gray-800">
+                {% for player in added_players %}
+                <div class="flex items-center justify-between px-6 py-4 hover:bg-[#1e2235] transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-[#0f1117] border border-gray-700 flex items-center justify-center text-sm font-bold text-gray-400 overflow-hidden">
+                            {% if player.photo %}
+                                <img src="{{ player.photo.url }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ player.full_name|first }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="/players/{{ player.pk }}/" class="font-medium text-sm hover:text-green-400">{{ player.full_name }}</a>
+                            <div class="text-gray-500 text-xs">{{ player.club }} · {{ player.position }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="px-6 py-8 text-center text-gray-500 text-sm">No players added yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right -->
+    <div class="space-y-6">
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6 text-center">
+            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 text-3xl font-bold mx-auto mb-4">
+                {{ scout.first_name|first|upper }}{% if not scout.first_name %}{{ scout.username|first|upper }}{% endif %}
+            </div>
+            <div class="font-bold text-xl">
+                {% if scout.first_name %}{{ scout.first_name }} {{ scout.last_name }}{% else %}{{ scout.username }}{% endif %}
+            </div>
+            <div class="text-gray-400 text-sm mt-1">{{ scout.email }}</div>
+            <div class="text-gray-500 text-xs mt-1">Joined {{ scout.date_joined|date:"M Y" }}</div>
+        </div>
+
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <h3 class="font-semibold mb-4 text-sm">Stats</h3>
+            <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Total Reports</span>
+                    <span class="font-semibold text-blue-400">{{ report_count }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Players Added</span>
+                    <span class="font-semibold text-purple-400">{{ scout.added_players.count }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

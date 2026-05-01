@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold">My Shortlist</h1>
+        <p class="text-gray-400 text-sm mt-1">{{ items|length }} players saved</p>
+    </div>
+</div>
+
+<div class="bg-[#1a1d27] rounded-xl border border-gray-800">
+    <div class="divide-y divide-gray-800">
+        {% for item in items %}
+        <div class="flex items-center justify-between px-6 py-4 hover:bg-[#1e2235] transition">
+            <div class="flex items-center gap-4 min-w-0">
+                <div class="w-10 h-10 bg-[#0f1117] rounded-full border border-gray-700 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 overflow-hidden">
+                    {% if item.player.photo %}
+                        <img src="{{ item.player.photo.url }}" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ item.player.full_name|first }}
+                    {% endif %}
+                </div>
+                <div class="min-w-0">
+                    <a href="/players/{{ item.player.pk }}/" class="font-medium text-sm hover:text-green-400 transition truncate block">
+                        {{ item.player.full_name }}
+                    </a>
+                    <div class="text-gray-500 text-xs">{{ item.player.club }} · {{ item.player.position }}</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 shrink-0">
+                <span class="text-xs text-gray-500">Added {{ item.added_at|date:"M d, Y" }}</span>
+                <a href="/players/{{ item.player.pk }}/shortlist/" class="text-xs text-red-400 hover:text-red-300 transition">Remove</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="px-6 py-16 text-center text-gray-500 text-sm">
+            No players in shortlist yet.
+            <a href="/players/" class="text-green-400 ml-1">Browse players →</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

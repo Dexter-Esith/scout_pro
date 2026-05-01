@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+        <a href="/players/" class="text-gray-500 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <h1 class="text-2xl font-bold">Add Player</h1>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- Basic Info -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <h3 class="font-semibold mb-5 text-sm text-gray-400 uppercase tracking-wider">Basic Info</h3>
+            <div class="grid grid-cols-2 gap-4">
+
+                <div class="col-span-2">
+                    <label class="block text-sm text-gray-400 mb-2">Full Name</label>
+                    <input type="text" name="full_name" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. Luka Beridze">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Date of Birth</label>
+                    <input type="date" name="date_of_birth" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Nationality</label>
+                    <input type="text" name="nationality" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. Georgia">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Club</label>
+                    <input type="text" name="club" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. Dinamo Tbilisi">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Position</label>
+                    <select name="position" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition">
+                        <option value="">Select position</option>
+                        <option value="GK">GK — Goalkeeper</option>
+                        <option value="CB">CB — Centre Back</option>
+                        <option value="LB">LB — Left Back</option>
+                        <option value="RB">RB — Right Back</option>
+                        <option value="CDM">CDM — Defensive Mid</option>
+                        <option value="CM">CM — Central Mid</option>
+                        <option value="CAM">CAM — Attacking Mid</option>
+                        <option value="LW">LW — Left Winger</option>
+                        <option value="RW">RW — Right Winger</option>
+                        <option value="ST">ST — Striker</option>
+                        <option value="CF">CF — Centre Forward</option>
+                        <option value="LM">LM — Left Midfielder</option>
+                        <option value="RM">RM — Right Midfielder</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Preferred Foot</label>
+                    <select name="preferred_foot" required
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition">
+                        <option value="">Select foot</option>
+                        <option value="Left">Left</option>
+                        <option value="Right">Right</option>
+                        <option value="Both">Both</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Height (cm)</label>
+                    <input type="number" name="height" required min="140" max="220"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. 180">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Weight (kg)</label>
+                    <input type="number" name="weight" required min="40" max="120"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. 75">
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="bg-[#1a1d27] rounded-xl border border-gray-800 p-6">
+            <h3 class="font-semibold mb-5 text-sm text-gray-400 uppercase tracking-wider">Additional Info</h3>
+            <div class="grid grid-cols-2 gap-4">
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Market Value (€) <span class="text-gray-600">optional</span></label>
+                    <input type="number" name="market_value"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. 500000">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Contract Expiry <span class="text-gray-600">optional</span></label>
+                    <input type="date" name="contract_expiry"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Agent <span class="text-gray-600">optional</span></label>
+                    <input type="text" name="agent"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-green-500 transition"
+                        placeholder="e.g. Giorgi Shushiashvili">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Photo <span class="text-gray-600">optional</span></label>
+                    <input type="file" name="photo" accept="image/*"
+                        class="w-full bg-[#0f1117] border border-gray-700 rounded-lg px-4 py-3 text-sm text-gray-400 focus:outline-none focus:border-green-500 transition">
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3">
+            <button type="submit"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition">
+                Save Player
+            </button>
+            <a href="/players/"
+                class="px-6 py-3 bg-[#1a1d27] hover:bg-[#1e2235] border border-gray-700 text-gray-400 rounded-lg transition text-center">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
