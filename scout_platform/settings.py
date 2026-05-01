@@ -93,3 +93,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://scout-pro-z9dh.onrender.com',
+    'https://*.onrender.com' # ეს ყველა ქვე-დომენს მოიცავს
+]
